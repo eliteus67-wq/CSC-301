@@ -1,0 +1,105 @@
+#include <iostream>
+#include <vector>
+#include <numeric>   // For std::accumulate
+#include <algorithm> // For std::min_element, std::find, std::sort, std::binary_search
+
+// Function Prototypes
+void displayScores(const std::vector<int>& scores, const std::string& message);
+int linearSearch(const std::vector<int>& arr, int target);
+
+int main() {
+    // We use std::vector for dynamic resizing capabilities
+    std::vector<int> scores;
+    int inputScore;
+
+    // --- Task 1: Input 10 scores and compute average ---
+    std::cout << "--- Task 1: Input 10 Scores & Compute Average ---\n";
+    for (int i = 0; i < 10; ++i) {
+        std::cout << "Enter score for student " << (i + 1) << ": ";
+        std::cin >> inputScore;
+        scores.push_back(inputScore); // Add score to the end of the vector
+    }
+
+    // Traverse and compute the average
+    // std::accumulate sums up elements from the beginning to the end of the vector
+    int sum = std::accumulate(scores.begin(), scores.end(), 0);
+    double average = static_cast<double>(sum) / scores.size();
+    
+    displayScores(scores, "\nCurrent scores:");
+    std::cout << "Average score: " << average << std::endl;
+
+    // --- Task 2: Insert a new score in the 5th position (index 4) ---
+    std::cout << "\n--- Task 2: Insert New Score ---\n";
+    int newScore;
+    std::cout << "Enter a new score to insert at the 5th position: ";
+    std::cin >> newScore;
+    
+    // Position 5 is index 4 (0-based index). 
+    // scores.begin() + 4 gives an iterator pointing to the 5th element's position.
+    scores.insert(scores.begin() + 4, newScore); 
+    displayScores(scores, "Scores after insertion:");
+
+    // --- Task 3: Delete the lowest score from the array ---
+    std::cout << "\n--- Task 3: Delete Lowest Score ---\n";
+    if (!scores.empty()) {
+        // std::min_element returns an iterator to the smallest element
+        auto minIt = std::min_element(scores.begin(), scores.end());
+        int lowestScore = *minIt;
+        
+        // Erase the element at that iterator position
+        scores.erase(minIt);
+        std::cout << "Deleted lowest score: " << lowestScore << std::endl;
+    }
+    displayScores(scores, "Scores after deleting lowest:");
+
+    // --- Task 4: Implement Linear and Binary Search ---
+    std::cout << "\n--- Task 4: Search for a Score ---\n";
+    int targetScore;
+    std::cout << "Enter a score to search for: ";
+    std::cin >> targetScore;
+
+    // Linear Search Implementation (Custom function above main)
+    int linearIndex = linearSearch(scores, targetScore);
+    if (linearIndex != -1) {
+        std::cout << "Linear Search: Score " << targetScore << " found at index " << linearIndex << "." << std::endl;
+    } else {
+        std::cout << "Linear Search: Score " << targetScore << " not found." << std::endl;
+    }
+
+    // Binary Search Implementation (Requires sorted array)
+    // Sort the vector first
+    std::sort(scores.begin(), scores.end());
+    displayScores(scores, "Scores sorted (for binary search):");
+    
+    // std::binary_search returns true/false if the element exists
+    bool foundBinary = std::binary_search(scores.begin(), scores.end(), targetScore);
+    if (foundBinary) {
+        std::cout << "Binary Search: Score " << targetScore << " found." << std::endl;
+    } else {
+        std::cout << "Binary Search: Score " << targetScore << " not found." << std::endl;
+    }
+
+    return 0;
+}
+
+// Helper function to display the vector contents
+void displayScores(const std::vector<int>& scores, const std::string& message) {
+    std::cout << message << " [";
+    for (size_t i = 0; i < scores.size(); ++i) {
+        std::cout << scores[i];
+        if (i < scores.size() - 1) {
+            std::cout << ", ";
+        }
+    }
+    std::cout << "]\n";
+}
+
+// Custom function for Linear Search
+int linearSearch(const std::vector<int>& arr, int target) {
+    for (size_t i = 0; i < arr.size(); ++i) {
+        if (arr[i] == target) {
+            return i; // Return the index if found
+        }
+    }
+    return -1; // Return -1 if not found
+}
